@@ -1,7 +1,11 @@
+import Logout from "@/components/Logout";
 import Posts from "@/components/Posts";
+import { getUser } from "@/lib/auth";
 import { dbConnecttion } from "@/lib/db";
 import { Post } from "@/models/Post";
+import axios from "axios";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 export const createPost = async (formData: FormData) => {
   "use server";
@@ -14,8 +18,13 @@ export const createPost = async (formData: FormData) => {
   revalidatePath("/dashboard");
 };
 
-const page = () => {
+const page = async () => {
   const name = "Chirag";
+
+  const user = await getUser();
+  if (!user) {
+    redirect("/auth");
+  }
 
   return (
     <div className="p-5 text-white">
@@ -24,12 +33,7 @@ const page = () => {
           <h1 className="font-semibold text-4xl font-mono italic text-neutral-300">
             Hey {name}...
           </h1>
-          <button
-            // onClick={handleSignout}
-            className="bg-red-950 border border-red-900 text-neutral-200 hover:border-red-950 transition-colors duration-150 cursor-pointer px-2 h-8 rounded-lg text-sm"
-          >
-            Sign out
-          </button>
+          <Logout />
         </div>
 
         <div className="description mt-3 font-mono text-sm text-neutral-400">
